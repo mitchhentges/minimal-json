@@ -158,6 +158,7 @@ public class ReadWriteBenchmark extends SimpleBenchmark {
                                "org-json",
                                "gson",
                                "jackson",
+                               "fuzzlesoft-json",
                                "json-simple",
                                "json-smart",
                                "minimal-json");

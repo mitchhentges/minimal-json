@@ -63,6 +63,7 @@ public class JsonRunner_Test {
       {"org-json"},
       {"gson"},
       {"jackson"},
+      {"fuzzlesoft-json"},
       {"json-simple"},
       {"json-smart"},
       {"minimal-json"}});

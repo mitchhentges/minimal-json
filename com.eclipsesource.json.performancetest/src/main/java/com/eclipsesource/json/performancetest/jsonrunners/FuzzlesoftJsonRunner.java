@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 EclipseSource.
+ * Copyright (c) 2013, 2015 EclipseSource and others.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,28 +21,43 @@
  ******************************************************************************/
 package com.eclipsesource.json.performancetest.jsonrunners;
 
-public class JsonRunnerFactory {
+import ca.fuzzlesoft.JsonCompose;
+import ca.fuzzlesoft.JsonParse;
 
-  public static JsonRunner findByName(String name) {
-    if ("null".equals(name)) {
-      return new NullRunner();
-    } else if ("org-json".equals(name)) {
-      return new JsonOrgRunner();
-    } else if ("gson".equals(name)) {
-      return new GsonRunner();
-    } else if ("jackson".equals(name)) {
-      return new JacksonRunner();
-    } else if ("fuzzlesoft-json".equals(name)) {
-      return new FuzzlesoftJsonRunner();
-    } else if ("json-simple".equals(name)) {
-      return new SimpleRunner();
-    } else if ("json-smart".equals(name)) {
-      return new JsonSmartRunner();
-    } else if ("minimal-json".equals(name)) {
-      return new MinimalJsonRunner();
-    } else {
-      throw new IllegalArgumentException("Unknown parser: " + name);
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.Map;
+
+
+public class FuzzlesoftJsonRunner extends JsonRunner {
+
+  @Override
+  public Object readFromString(String string) throws IOException {
+    return JsonParse.parse(string);
+  }
+
+  @Override
+  public Object readFromReader(Reader reader) throws IOException {
+    char[] arr = new char[8 * 1024];
+    StringBuilder buffer = new StringBuilder();
+    int numCharsRead;
+    while ((numCharsRead = reader.read(arr, 0, arr.length)) != -1) {
+      buffer.append(arr, 0, numCharsRead);
     }
+    reader.close();
+    return readFromString(buffer.toString());
+  }
+
+  @Override
+  public String writeToString(Object model) throws IOException {
+    return JsonCompose.compose((Map<String, Object>)model);
+  }
+
+  @Override
+  public void writeToWriter(Object model, Writer writer) throws IOException {
+    String value = writeToString(model);
+    writer.write(value);
   }
 
 }
